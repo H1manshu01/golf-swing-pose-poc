@@ -1,0 +1,98 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Golf Swing Pose POC</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Video Input</ion-card-title>
+      <ion-card-subtitle>Paste a video URL and run on-device pose analysis</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="full">
+        <ion-label position="stacked">Video URL</ion-label>
+        <ion-input
+          [(ngModel)]="videoUrl"
+          type="url"
+          placeholder="https://example.com/swing.mp4"
+          autocomplete="off"
+        ></ion-input>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Frame rate</ion-label>
+        <ion-select [(ngModel)]="frameRate" interface="popover">
+          <ion-select-option *ngFor="let rate of fpsOptions" [value]="rate">{{ rate }} fps</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-button
+        expand="block"
+        color="light"
+        size="large"
+        class="glass"
+        (click)="analyze()"
+        [disabled]="isProcessing || !videoUrl"
+      >
+        Analyze
+      </ion-button>
+      <p class="hint">Frames are sampled in the hidden video element, processed with MediaPipe Pose, and analyzed on-device.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="hidden-video">
+    <video #hiddenVideo playsinline muted crossorigin="anonymous"></video>
+  </div>
+
+  <ion-card *ngIf="isProcessing">
+    <ion-card-header>
+      <ion-card-title>Processing</ion-card-title>
+      <ion-card-subtitle>{{ statusMessage }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-progress-bar [value]="progress / 100" color="tertiary"></ion-progress-bar>
+      <p class="status">{{ progress }}% complete</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="analysis" class="analysis-card">
+    <ion-card-header class="analysis-header">
+      <ion-card-title>Analysis Results</ion-card-title>
+      <ion-card-subtitle>{{ framesProcessed.length }} frames processed • {{ analysis.duration | number:'1.1-1' }}s</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content class="analysis-content">
+      <ion-list lines="full">
+        <ion-item *ngFor="let phase of analysis?.phases">
+          <ion-label>
+            <h2>{{ phase.name | titlecase }} ({{ phase.timestamp | number:'1.1-1' }}s)</h2>
+            <p>{{ phase.description }}</p>
+            <div class="metric-grid">
+              <div class="metric">Spine tilt: {{ phase.metrics.spineTilt | number:'1.0-1' }}°</div>
+              <div class="metric">Shoulder rotation: {{ phase.metrics.shoulderRotation | number:'1.0-1' }}°</div>
+              <div class="metric">Hip rotation: {{ phase.metrics.hipRotation | number:'1.0-1' }}°</div>
+              <div class="metric">Lead wrist: {{ phase.metrics.leftWristAngle | number:'1.0-1' }}°</div>
+              <div class="metric">Trail wrist: {{ phase.metrics.rightWristAngle | number:'1.0-1' }}°</div>
+              <div class="metric">Lead elbow: {{ phase.metrics.leftElbowAngle | number:'1.0-1' }}°</div>
+              <div class="metric">Trail elbow: {{ phase.metrics.rightElbowAngle | number:'1.0-1' }}°</div>
+              <div class="metric">Knee flexion: {{ phase.metrics.kneeFlexion | number:'1.0-1' }}°</div>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <div class="summary" *ngIf="analysis.summary?.length">
+        <h3>Coaching Notes</h3>
+        <ul>
+          <li *ngFor="let note of analysis.summary">{{ note }}</li>
+        </ul>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <img src="https://ost.agency/assets/img/logo/logo.svg" alt="OpenSource Technologies Logo" class="footer-logo" />
+      <span>© OpenSource Technologies</span>
+    </div>
+  </footer>
+</ion-content>

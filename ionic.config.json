@@ -1,0 +1,7 @@
+{
+  "name": "golf-swing-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
