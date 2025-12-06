@@ -1,7 +1,7 @@
 {
   "name": "golf-swing-app",
   "version": "0.0.1",
-  "author": "Ionic Framework",
+  "author": "Himanshu Sharma",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
@@ -9,8 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
-    "pages:deploy": "wrangler pages deploy ./www --project-name golf-swing-poc"
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -61,8 +60,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.0",
-    "wrangler": "^3.90.0"
+    "typescript": "~5.9.0"
   },
-  "description": "An Ionic project"
+  "description": "Golf Swing Pose POC"
 }
